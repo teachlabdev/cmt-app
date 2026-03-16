@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convince Me That — Packet Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:      #1B3A5C;
+      --teal:      #1A6B6B;
+      --gold:      #E8A820;
+      --gold-dark: #9A6800;
+      --gold-bg:   #FDF3DC;
+      --coral:     #B83A1A;
+      --sage:      #35603F;
+      --lav:       #4E4080;
+      --cream:     #FDF8F2;
+      --lgray:     #F0EEE9;
+      --mgray:     #606060;
+      --dark:      #1A1A1A;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--dark);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--navy);
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    header::after {
+      content: '';
+      display: block;
+      height: 5px;
+      background: var(--gold);
+    }
+    .header-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 2rem;
+    }
+    .eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 0.75rem;
+    }
+    h1 span { color: var(--gold); }
+    .header-sub {
+      font-size: 0.95rem;
+      color: #8AAEBD;
+      max-width: 520px;
+      line-height: 1.6;
+    }
+
+    /* ── Main layout ── */
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4rem;
+    }
+
+    /* ── How it works strip ── */
+    .how-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 2.5rem;
+    }
+    .how-step {
+      background: #fff;
+      border: 1.5px solid var(--lgray);
+      border-radius: 10px;
+      padding: 1rem 0.9rem;
+    }
+    .how-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .how-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.25rem;
+    }
+    .how-desc {
+      font-size: 0.72rem;
+      color: var(--mgray);
+      line-height: 1.45;
+    }
+
+    /* ── Form card ── */
+    .form-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 24px rgba(27,58,92,0.08);
+      overflow: hidden;
+    }
+    .form-header {
+      background: var(--navy);
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .form-header-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+    .form-header h2 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.04em;
+    }
+
+    form { padding: 1.75rem; }
+
+    .field { margin-bottom: 1.5rem; }
+    .field:last-of-type { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.02em;
+    }
+    label .hint {
+      font-weight: 400;
+      color: var(--mgray);
+      margin-left: 0.4rem;
+      font-size: 0.78rem;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      border: 1.5px solid #DDD9D3;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      color: var(--dark);
+      background: var(--cream);
+      transition: border-color 0.18s, box-shadow 0.18s;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(27,58,92,0.1);
+      background: #fff;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.55;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    /* Domain pills */
+    .domain-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.4rem;
+    }
+    .domain-pill {
+      display: none; /* hidden radio */
+    }
+    .domain-pill + label {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      border: 1.5px solid #DDD9D3;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--mgray);
+      cursor: pointer;
+      transition: all 0.15s;
+      margin: 0;
+      letter-spacing: 0;
+    }
+    .domain-pill:checked + label {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: #fff;
+    }
+    .domain-pill + label:hover {
+      border-color: var(--navy);
+      color: var(--navy);
+    }
+
+    /* Grade selector */
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23606060' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.9rem center;
+      padding-right: 2.2rem;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      border: none;
+      border-top: 1.5px solid var(--lgray);
+      margin: 1.5rem 0;
+    }
+
+    /* ── Submit button ── */
+    .btn-wrap { margin-top: 1.75rem; }
+    button[type="submit"] {
+      width: 100%;
+      padding: 1rem;
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      letter-spacing: 0.02em;
+    }
+    button[type="submit"]:hover { background: #152d48; }
+    button[type="submit"]:active { transform: scale(0.99); }
+    button[type="submit"]:disabled {
+      background: #8899AA;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-icon { font-size: 1.1rem; }
+
+    /* ── Loading state ── */
+    .spinner {
+      display: none;
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Success / Error toast ── */
+    .toast {
+      display: none;
+      margin-top: 1rem;
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+    .toast.success {
+      background: #EAF5EC;
+      border: 1.5px solid var(--sage);
+      color: var(--sage);
+    }
+    .toast.error {
+      background: #FDEAE5;
+      border: 1.5px solid var(--coral);
+      color: var(--coral);
+    }
+
+    /* ── Role legend ── */
+    .roles-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.6rem;
+      margin-top: 2.5rem;
+    }
+    .role-badge {
+      border-radius: 8px;
+      padding: 0.75rem 0.6rem;
+      text-align: center;
+    }
+    .role-badge .role-icon {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.95rem;
+      color: #fff;
+      margin: 0 auto 0.4rem;
+    }
+    .role-badge .role-name {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .rb-claim    { background: var(--coral); }
+    .rb-text     { background: var(--teal); }
+    .rb-opp      { background: var(--lav); }
+    .rb-final    { background: var(--sage); }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.78rem;
+      color: #AAA;
+    }
+
+    @media (max-width: 600px) {
+      .how-strip { grid-template-columns: repeat(2, 1fr); }
+      .field-row { grid-template-columns: 1fr; }
+      .roles-strip { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <p class="eyebrow">Evidence &amp; Argument &nbsp;•&nbsp; Small Group Activity</p>
+    <h1>Convince Me <span>That…</span></h1>
+    <p class="header-sub">Generate a complete 6-page student packet in seconds. Fill in four fields, download your PDF, print and go.</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- How it works -->
+  <div class="how-strip">
+    <div class="how-step">
+      <div class="how-num">1</div>
+      <div class="how-label">Think First</div>
+      <div class="how-desc">Students respond independently before any group discussion.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">2</div>
+      <div class="how-label">Take a Role</div>
+      <div class="how-desc">Each teammate gets a job: Claim, Evidence, Opposition, or Final Word.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">3</div>
+      <div class="how-label">Discuss</div>
+      <div class="how-desc">A structured protocol guides the team to the strongest argument.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">4</div>
+      <div class="how-label">Write Together</div>
+      <div class="how-desc">Teams build a C-E-R-C response and self-assess against a rubric.</div>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="form-card">
+    <div class="form-header">
+      <div class="form-header-dot"></div>
+      <h2>BUILD YOUR PACKET</h2>
+    </div>
+
+    <form id="cmt-form" action="/generate" method="POST">
+
+      <div class="field">
+        <label for="prompt">
+          The Convince Me That statement
+          <span class="hint">— the arguable claim students will defend or challenge</span>
+        </label>
+        <textarea
+          id="prompt"
+          name="prompt"
+          placeholder="e.g. Molly was right to steal from the giant, even though stealing is wrong."
+          required
+          maxlength="300"
+        ></textarea>
+      </div>
+
+      <div class="field">
+        <label for="text_title">
+          Text or unit title
+          <span class="hint">— appears on every page</span>
+        </label>
+        <input
+          type="text"
+          id="text_title"
+          name="text_title"
+          placeholder="e.g. Molly Whuppie"
+          required
+          maxlength="100"
+        >
+      </div>
+
+      <hr class="divider">
+
+      <div class="field-row">
+        <div class="field">
+          <label for="grade">Grade level</label>
+          <select id="grade" name="grade">
+            <option value="K">Kindergarten</option>
+            <option value="1">Grade 1</option>
+            <option value="2">Grade 2</option>
+            <option value="3">Grade 3</option>
+            <option value="4" selected>Grade 4</option>
+            <option value="5">Grade 5</option>
+            <option value="6">Grade 6</option>
+            <option value="7">Grade 7</option>
+            <option value="8">Grade 8</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Subject domain</label>
+          <div class="domain-pills">
+            <input class="domain-pill" type="radio" name="domain" id="d-ela" value="ELA" checked>
+            <label for="d-ela">ELA</label>
+
+            <input class="domain-pill" type="radio" name="domain" id="d-ss" value="Social Studies">
+            <label for="d-ss">Social Studies</label>
+
+            <input class="domain-pill" type="radio" name="domain" id="d-sci" value="Science">
+            <label for="d-sci">Science</label>
+
+            <input class="domain-pill" type="radio" name="domain" id="d-math" value="Math">
+            <label for="d-math">Math</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-wrap">
+        <button type="submit" id="submit-btn">
+          <span class="btn-icon">⬇</span>
+          <span id="btn-text">Generate &amp; Download PDF</span>
+          <div class="spinner" id="spinner"></div>
+        </button>
+        <div class="toast" id="toast"></div>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Role legend -->
+  <div class="roles-strip">
+    <div class="role-badge rb-claim">
+      <div class="role-icon">C</div>
+      <div class="role-name">Claim Maker</div>
+    </div>
+    <div class="role-badge rb-text">
+      <div class="role-icon">T</div>
+      <div class="role-name">Text Hunter</div>
+    </div>
+    <div class="role-badge rb-opp">
+      <div class="role-icon">O</div>
+      <div class="role-name">Opposition Finder</div>
+    </div>
+    <div class="role-badge rb-final">
+      <div class="role-icon">F</div>
+      <div class="role-name">Final Word Author</div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Built for educators &nbsp;•&nbsp; Based on the Convince Me That framework by SCMath.org
+</footer>
+
+<script>
+  const form     = document.getElementById('cmt-form');
+  const btn      = document.getElementById('submit-btn');
+  const btnText  = document.getElementById('btn-text');
+  const spinner  = document.getElementById('spinner');
+  const toast    = document.getElementById('toast');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Loading state
+    btn.disabled = true;
+    btnText.textContent = 'Generating…';
+    spinner.style.display = 'block';
+    toast.style.display = 'none';
+
+    try {
+      const formData = new FormData(form);
+      const res = await fetch('/generate', { method: 'POST', body: formData });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(err.error || 'Server error');
+      }
+
+      // Trigger download
+      const blob = await res.blob();
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      // Get filename from Content-Disposition header if available
+      const cd   = res.headers.get('Content-Disposition') || '';
+      const match = cd.match(/filename="?([^"]+)"?/);
+      a.download = match ? match[1] : 'CMT_Packet.pdf';
+      a.href = url;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      toast.className = 'toast success';
+      toast.textContent = '✓ Your packet is downloading now. Print double-sided for best results.';
+      toast.style.display = 'block';
+
+    } catch (err) {
+      toast.className = 'toast error';
+      toast.textContent = '✗ Something went wrong: ' + err.message;
+      toast.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btnText.textContent = 'Generate & Download PDF';
+      spinner.style.display = 'none';
+    }
+  });
+</script>
+
+</body>
+</html>
